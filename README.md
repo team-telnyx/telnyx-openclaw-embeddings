@@ -9,7 +9,7 @@ Registers Telnyx as a first-class memory embedding provider using the OpenAI-com
 - **Provider ID:** `telnyx`
 - **Default model:** `thenlper/gte-large` (1024 dimensions)
 - **Supported models:** `thenlper/gte-large`, `intfloat/multilingual-e5-large`, `Qwen/Qwen3-Embedding-8B`
-- **Auto-select priority:** 25 (after local=10 + openai=20, before gemini=30)
+- **Auto-select priority:** 25
 - **Auth:** `TELNYX_API_KEY` env var or provider config
 
 ## Install

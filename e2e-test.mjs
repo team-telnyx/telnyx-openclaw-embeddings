@@ -3,7 +3,7 @@
  *
  * Usage:
  *   export TELNYX_API_KEY=KEY...
- *   node --import tsx ./e2e-test.mjs
+ *   node e2e-test.mjs
  *
  * Sends a single embedding request to the Telnyx AI API and verifies
  * that the response contains a valid vector of the expected dimensionality.

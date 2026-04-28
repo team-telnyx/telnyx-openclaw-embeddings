@@ -1,5 +1,9 @@
 import { describe, expect, it } from "vitest";
-import { normalizeTelnyxModel, DEFAULT_TELNYX_EMBEDDING_MODEL } from "./embedding-provider.js";
+import {
+  normalizeTelnyxModel,
+  DEFAULT_TELNYX_EMBEDDING_MODEL,
+  TELNYX_MODEL_DIMENSIONS,
+} from "./embedding-provider.js";
 
 describe("normalizeTelnyxModel", () => {
   it("returns default model for empty string", () => {
@@ -30,5 +34,23 @@ describe("normalizeTelnyxModel", () => {
 
   it("default model is thenlper/gte-large", () => {
     expect(DEFAULT_TELNYX_EMBEDDING_MODEL).toBe("thenlper/gte-large");
+  });
+});
+
+describe("TELNYX_MODEL_DIMENSIONS", () => {
+  it("thenlper/gte-large has 1024 dimensions", () => {
+    expect(TELNYX_MODEL_DIMENSIONS["thenlper/gte-large"]).toBe(1024);
+  });
+
+  it("intfloat/multilingual-e5-large has 1024 dimensions", () => {
+    expect(TELNYX_MODEL_DIMENSIONS["intfloat/multilingual-e5-large"]).toBe(1024);
+  });
+
+  it("Qwen/Qwen3-Embedding-8B has 4096 dimensions", () => {
+    expect(TELNYX_MODEL_DIMENSIONS["Qwen/Qwen3-Embedding-8B"]).toBe(4096);
+  });
+
+  it("unknown model returns undefined (no wrong default)", () => {
+    expect(TELNYX_MODEL_DIMENSIONS["some-org/unknown-model"]).toBeUndefined();
   });
 });

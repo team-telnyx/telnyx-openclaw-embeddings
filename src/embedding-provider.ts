@@ -16,7 +16,7 @@ export type TelnyxEmbeddingClient = {
 const DEFAULT_TELNYX_BASE_URL = "https://api.telnyx.com/v2/ai/openai";
 export const DEFAULT_TELNYX_EMBEDDING_MODEL = "thenlper/gte-large";
 
-const TELNYX_MODEL_DIMENSIONS: Record<string, number> = {
+export const TELNYX_MODEL_DIMENSIONS: Record<string, number> = {
   "thenlper/gte-large": 1024,
   "intfloat/multilingual-e5-large": 1024,
   "Qwen/Qwen3-Embedding-8B": 4096,

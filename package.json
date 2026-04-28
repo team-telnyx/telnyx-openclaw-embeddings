@@ -9,6 +9,9 @@
       "./index.ts"
     ]
   },
+  "engines": {
+    "node": ">=22.14.0"
+  },
   "scripts": {
     "test": "vitest run"
   },

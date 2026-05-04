@@ -1,5 +1,7 @@
 {
   "id": "telnyx-embeddings",
+  "name": "Telnyx Embeddings",
+  "description": "Telnyx embedding provider for OpenClaw memory search",
   "enabledByDefault": true,
   "providers": ["telnyx"],
   "providerAuthEnvVars": {

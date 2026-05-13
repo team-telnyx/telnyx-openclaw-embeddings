@@ -1,13 +1,19 @@
 {
-  "name": "telnyx-openclaw-embeddings",
+  "name": "telnyx-embeddings-provider",
   "version": "0.1.0",
   "type": "module",
   "main": "index.ts",
   "description": "Telnyx embedding provider for OpenClaw memory search",
   "openclaw": {
     "extensions": [
-      "./index.ts"
-    ]
+      "./dist/index.js"
+    ],
+    "compat": {
+      "pluginApi": "^1.0.0"
+    },
+    "build": {
+      "openclawVersion": "2026.4.21"
+    }
   },
   "engines": {
     "node": ">=22.14.0"
@@ -15,7 +21,12 @@
   "scripts": {
     "test": "vitest run"
   },
-  "keywords": ["openclaw", "telnyx", "embeddings", "memory"],
+  "keywords": [
+    "openclaw",
+    "telnyx",
+    "embeddings",
+    "memory"
+  ],
   "author": "Telnyx AI FDE",
   "license": "ISC",
   "devDependencies": {

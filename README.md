@@ -79,8 +79,13 @@ Uses the same `resolveRemoteEmbeddingClient` + `fetchRemoteEmbeddingVectors` inf
 
 ## Models
 
-| Model | Dimensions |
-|-------|-----------|
-| `thenlper/gte-large` (default) | 1024 |
-| `intfloat/multilingual-e5-large` | 1024 |
-| `Qwen/Qwen3-Embedding-8B` | 4096 |
+| Model | Dimensions | Max tokens |
+|-------|-----------|------------|
+| `thenlper/gte-large` (default) | 1024 | 512 |
+| `intfloat/multilingual-e5-large` | 1024 | 512 |
+| `Qwen/Qwen3-Embedding-8B` | 4096 | long-context (≥1k) |
+
+> **Note:** The 512-token models will reject inputs that exceed their context window.
+> The plugin estimates token count before sending and throws a descriptive error
+> instead of round-tripping a 400 from the API. For longer documents, use
+> `Qwen/Qwen3-Embedding-8B` or chunk your input before embedding.

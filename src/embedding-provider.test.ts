@@ -3,6 +3,7 @@ import {
   normalizeTelnyxModel,
   DEFAULT_TELNYX_EMBEDDING_MODEL,
   TELNYX_MODEL_DIMENSIONS,
+  TELNYX_MODEL_MAX_TOKENS,
 } from "./embedding-provider.js";
 
 describe("normalizeTelnyxModel", () => {
@@ -52,5 +53,23 @@ describe("TELNYX_MODEL_DIMENSIONS", () => {
 
   it("unknown model returns undefined (no wrong default)", () => {
     expect(TELNYX_MODEL_DIMENSIONS["some-org/unknown-model"]).toBeUndefined();
+  });
+});
+
+describe("TELNYX_MODEL_MAX_TOKENS", () => {
+  it("thenlper/gte-large has 512 max tokens", () => {
+    expect(TELNYX_MODEL_MAX_TOKENS["thenlper/gte-large"]).toBe(512);
+  });
+
+  it("intfloat/multilingual-e5-large has 512 max tokens", () => {
+    expect(TELNYX_MODEL_MAX_TOKENS["intfloat/multilingual-e5-large"]).toBe(512);
+  });
+
+  it("Qwen/Qwen3-Embedding-8B has null (long-context)", () => {
+    expect(TELNYX_MODEL_MAX_TOKENS["Qwen/Qwen3-Embedding-8B"]).toBeNull();
+  });
+
+  it("unknown model returns undefined", () => {
+    expect(TELNYX_MODEL_MAX_TOKENS["some-org/unknown-model"]).toBeUndefined();
   });
 });

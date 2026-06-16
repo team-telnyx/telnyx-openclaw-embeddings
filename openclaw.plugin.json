@@ -4,8 +4,13 @@
   "description": "Telnyx embedding provider for OpenClaw memory search",
   "enabledByDefault": true,
   "providers": ["telnyx"],
-  "providerAuthEnvVars": {
-    "telnyx": ["TELNYX_API_KEY"]
+  "setup": {
+    "providers": [
+      {
+        "id": "telnyx",
+        "envVars": ["TELNYX_API_KEY"]
+      }
+    ]
   },
   "providerAuthChoices": [
     {

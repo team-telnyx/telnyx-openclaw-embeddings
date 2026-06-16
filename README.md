@@ -15,7 +15,11 @@ Registers Telnyx as a first-class memory embedding provider using the OpenAI-com
 ## Install
 
 ```bash
-openclaw plugins install team-telnyx/telnyx-openclaw-embeddings
+git clone https://github.com/team-telnyx/telnyx-openclaw-embeddings.git
+cd telnyx-openclaw-embeddings
+npm install
+npm run build
+openclaw plugins install . --force
 ```
 
 ## Configuration

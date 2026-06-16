@@ -22,11 +22,35 @@ export const TELNYX_MODEL_DIMENSIONS: Record<string, number> = {
   "Qwen/Qwen3-Embedding-8B": 4096,
 };
 
+export const TELNYX_MODEL_MAX_INPUT_TOKENS: Record<string, number> = {
+  "thenlper/gte-large": 512,
+};
+
 export function normalizeTelnyxModel(model: string): string {
   const trimmed = model.trim();
   if (!trimmed) {
     return DEFAULT_TELNYX_EMBEDDING_MODEL;
   }
+  return trimmed;
+}
+
+export function normalizeTelnyxBaseUrl(baseUrl: string): string {
+  const trimmed = baseUrl.trim().replace(/\/+$/, "");
+  if (!trimmed) {
+    return DEFAULT_TELNYX_BASE_URL;
+  }
+
+  try {
+    const url = new URL(trimmed);
+    const normalizedPath = url.pathname.replace(/\/+$/, "");
+    if (normalizedPath === "/v2/ai") {
+      url.pathname = "/v2/ai/openai";
+      return url.toString().replace(/\/+$/, "");
+    }
+  } catch {
+    // Keep custom non-URL values untouched except for trimming.
+  }
+
   return trimmed;
 }
 
@@ -59,6 +83,9 @@ export async function createTelnyxEmbeddingProvider(
       ...(typeof TELNYX_MODEL_DIMENSIONS[client.model] === "number"
         ? { dimensions: TELNYX_MODEL_DIMENSIONS[client.model] }
         : {}),
+      ...(typeof TELNYX_MODEL_MAX_INPUT_TOKENS[client.model] === "number"
+        ? { maxInputTokens: TELNYX_MODEL_MAX_INPUT_TOKENS[client.model] }
+        : {}),
       embedQuery: async (text) => {
         const [vec] = await embed([text]);
         return vec ?? [];
@@ -78,5 +105,8 @@ export async function resolveTelnyxEmbeddingClient(
     defaultBaseUrl: DEFAULT_TELNYX_BASE_URL,
     normalizeModel: normalizeTelnyxModel,
   });
-  return client;
+  return {
+    ...client,
+    baseUrl: normalizeTelnyxBaseUrl(client.baseUrl),
+  };
 }

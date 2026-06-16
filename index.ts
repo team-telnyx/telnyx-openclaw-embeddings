@@ -1,7 +1,10 @@
-import { definePluginEntry } from "openclaw/plugin-sdk/plugin-entry";
+import {
+  definePluginEntry,
+  type OpenClawPluginDefinition,
+} from "openclaw/plugin-sdk/plugin-entry";
 import { telnyxMemoryEmbeddingProviderAdapter } from "./src/memory-embedding-adapter.js";
 
-export default definePluginEntry({
+const plugin: OpenClawPluginDefinition = definePluginEntry({
   id: "telnyx-embeddings",
   name: "Telnyx Embeddings",
   description: "Telnyx embedding provider for OpenClaw memory search",
@@ -9,3 +12,5 @@ export default definePluginEntry({
     api.registerMemoryEmbeddingProvider(telnyxMemoryEmbeddingProviderAdapter);
   },
 });
+
+export default plugin;

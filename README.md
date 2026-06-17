@@ -9,8 +9,11 @@ Registers Telnyx as a first-class memory embedding provider using the OpenAI-com
 - **Provider ID:** `telnyx`
 - **Default model:** `thenlper/gte-large` (1024 dimensions)
 - **Supported models:** `thenlper/gte-large`, `intfloat/multilingual-e5-large`, `Qwen/Qwen3-Embedding-8B`
-- **Auto-select priority:** 25
 - **Auth:** `TELNYX_API_KEY` env var or provider config
+
+## Setup Walkthrough
+
+Watch the full setup walkthrough: [openclaw-embeddings-setup-walkthrough.mp4](docs/assets/openclaw-embeddings-setup-walkthrough.mp4)
 
 ## Install
 
@@ -30,7 +33,7 @@ openclaw plugins install . --force
 export TELNYX_API_KEY=KEY...
 ```
 
-The provider will be auto-selected when no higher-priority provider is available.
+Use explicit provider selection to route memory search through Telnyx.
 
 ### Explicit provider selection
 

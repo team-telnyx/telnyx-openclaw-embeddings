@@ -1,9 +1,12 @@
 import {
   fetchRemoteEmbeddingVectors,
   resolveRemoteEmbeddingClient,
-  type MemoryEmbeddingProvider,
-  type MemoryEmbeddingProviderCreateOptions,
 } from "openclaw/plugin-sdk/memory-core-host-engine-embeddings";
+import type {
+  EmbeddingInput,
+  EmbeddingProvider,
+  EmbeddingProviderCreateOptions,
+} from "openclaw/plugin-sdk/embedding-providers";
 import type { SsrFPolicy } from "openclaw/plugin-sdk/ssrf-runtime";
 
 export type TelnyxEmbeddingClient = {
@@ -54,13 +57,17 @@ export function normalizeTelnyxBaseUrl(baseUrl: string): string {
   return trimmed;
 }
 
+function embeddingInputToText(input: EmbeddingInput): string {
+  return typeof input === "string" ? input : input.text;
+}
+
 export async function createTelnyxEmbeddingProvider(
-  options: MemoryEmbeddingProviderCreateOptions,
-): Promise<{ provider: MemoryEmbeddingProvider; client: TelnyxEmbeddingClient }> {
+  options: EmbeddingProviderCreateOptions,
+): Promise<{ provider: EmbeddingProvider; client: TelnyxEmbeddingClient }> {
   const client = await resolveTelnyxEmbeddingClient(options);
   const url = `${client.baseUrl.replace(/\/$/, "")}/embeddings`;
 
-  const embed = async (input: string[]): Promise<number[][]> => {
+  const embedTexts = async (input: string[], signal?: AbortSignal): Promise<number[][]> => {
     if (input.length === 0) {
       return [];
     }
@@ -68,6 +75,7 @@ export async function createTelnyxEmbeddingProvider(
       url,
       headers: client.headers,
       ssrfPolicy: client.ssrfPolicy,
+      signal,
       body: {
         model: client.model,
         input,
@@ -86,22 +94,33 @@ export async function createTelnyxEmbeddingProvider(
       ...(typeof TELNYX_MODEL_MAX_INPUT_TOKENS[client.model] === "number"
         ? { maxInputTokens: TELNYX_MODEL_MAX_INPUT_TOKENS[client.model] }
         : {}),
-      embedQuery: async (text) => {
-        const [vec] = await embed([text]);
+      embed: async (input, callOptions) => {
+        const [vec] = await embedTexts([embeddingInputToText(input)], callOptions?.signal);
         return vec ?? [];
       },
-      embedBatch: async (texts) => await embed(texts),
+      embedBatch: async (inputs, callOptions) =>
+        await embedTexts(inputs.map(embeddingInputToText), callOptions?.signal),
     },
     client,
   };
 }
 
 export async function resolveTelnyxEmbeddingClient(
-  options: MemoryEmbeddingProviderCreateOptions,
+  options: EmbeddingProviderCreateOptions,
 ): Promise<TelnyxEmbeddingClient> {
   const client = await resolveRemoteEmbeddingClient({
     provider: "telnyx",
-    options,
+    options: {
+      config: options.config,
+      agentDir: options.agentDir,
+      provider: options.provider,
+      remote: options.remote,
+      model: options.model ?? DEFAULT_TELNYX_EMBEDDING_MODEL,
+      inputType: options.inputType,
+      queryInputType: options.queryInputType,
+      documentInputType: options.documentInputType,
+      local: options.local,
+    },
     defaultBaseUrl: DEFAULT_TELNYX_BASE_URL,
     normalizeModel: normalizeTelnyxModel,
   });

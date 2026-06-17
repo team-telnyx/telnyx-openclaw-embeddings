@@ -1,11 +1,17 @@
-import { describe, expect, it } from "vitest";
+import { afterEach, describe, expect, it, vi } from "vitest";
 import {
+  createTelnyxEmbeddingProvider,
   normalizeTelnyxModel,
   normalizeTelnyxBaseUrl,
   DEFAULT_TELNYX_EMBEDDING_MODEL,
   TELNYX_MODEL_DIMENSIONS,
   TELNYX_MODEL_MAX_INPUT_TOKENS,
 } from "./embedding-provider.js";
+
+afterEach(() => {
+  vi.unstubAllEnvs();
+  vi.unstubAllGlobals();
+});
 
 describe("normalizeTelnyxModel", () => {
   it("returns default model for empty string", () => {
@@ -90,5 +96,42 @@ describe("TELNYX_MODEL_MAX_INPUT_TOKENS", () => {
 
   it("unknown model returns undefined", () => {
     expect(TELNYX_MODEL_MAX_INPUT_TOKENS["some-org/unknown-model"]).toBeUndefined();
+  });
+});
+
+describe("createTelnyxEmbeddingProvider", () => {
+  it("uses the default Telnyx model when the caller omits model", async () => {
+    const fetchMock = vi.fn(async (_url, init) => {
+      const body = JSON.parse(String(init?.body));
+      expect(body.model).toBe(DEFAULT_TELNYX_EMBEDDING_MODEL);
+      expect(body.input).toEqual(["OpenClaw memory search"]);
+
+      return new Response(
+        JSON.stringify({
+          data: [{ embedding: Array.from({ length: 1024 }, (_, index) => index / 1024) }],
+        }),
+        {
+          status: 200,
+          headers: { "Content-Type": "application/json" },
+        },
+      );
+    });
+
+    vi.stubGlobal("fetch", fetchMock);
+
+    const { provider } = await createTelnyxEmbeddingProvider({
+      config: {},
+      provider: "telnyx",
+      model: "",
+      remote: {
+        apiKey: "KEY_test",
+      },
+    });
+
+    const embedding = await provider.embed("OpenClaw memory search");
+
+    expect(provider.model).toBe(DEFAULT_TELNYX_EMBEDDING_MODEL);
+    expect(embedding).toHaveLength(1024);
+    expect(fetchMock).toHaveBeenCalledOnce();
   });
 });

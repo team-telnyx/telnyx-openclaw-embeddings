@@ -29,7 +29,7 @@
     }
   ],
   "contracts": {
-    "memoryEmbeddingProviders": ["telnyx"]
+    "embeddingProviders": ["telnyx"]
   },
   "configSchema": {
     "type": "object",
